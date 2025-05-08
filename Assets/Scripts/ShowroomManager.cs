@@ -1,7 +1,6 @@
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class ShowroomManager : MonoBehaviour
@@ -53,12 +52,6 @@ public class ShowroomManager : MonoBehaviour
     public void DoAnimationSequence()
     {
         Sequence sequence = DOTween.Sequence();
-        for (int i = 0; i < boxPanel.Count; i++)
-        {
-
-            boxPanel[i].transform.DOLocalMoveY(boxPanel[i].transform.position.y, baseAnimationDuration * 6f).From(boxPanel[i].transform.position.y + multiply).SetEase(Ease.Linear);
-        }
-
         spriteRendererTarget.DOFade(1, 0);
         float totalAnimationDuration = 3;
         //totalAnimationDuration += baseAnimationDuration;
