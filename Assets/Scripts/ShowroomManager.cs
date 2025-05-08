@@ -210,7 +210,7 @@ public class ShowroomManager : MonoBehaviour
             float multiply = (col % 2 == 0) ? -25f : 25f;
             sequence.Insert(totalAnimationDuration, boxPanel[i].transform.DOLocalMove(boxStartPos[i], 0).SetEase(Ease.Linear));
 
-            sequence.Insert(totalAnimationDuration, boxPanel[i].transform.DOLocalMoveY(boxPanel[i].transform.position.y, baseAnimationDuration * 6f).From(boxPanel[i].transform.position.y + multiply).SetEase(Ease.Linear));
+            sequence.Insert(totalAnimationDuration, boxPanel[i].transform.DOLocalMoveY(boxStartPos[i].y, baseAnimationDuration * 6f).From(boxPanel[i].transform.position.y + multiply).SetEase(Ease.Linear));
         }
         totalAnimationDuration += baseAnimationDuration * 4f;
 
