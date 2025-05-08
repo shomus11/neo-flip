@@ -13,14 +13,21 @@ public class ShowroomManager : MonoBehaviour
     [SerializeField] List<GameObject> boxPanel;
     [SerializeField] SpriteRenderer spriteRendererTarget;
     [SerializeField] GameObject textparty;
+    [SerializeField] List<Vector3> boxStartPos;
 
     float baseAnimationDuration = .25f;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        DoAnimationSequence();
+        for (int i = 0; i < boxPanel.Count; i++)
+        {
+            boxStartPos.Add(boxPanel[i].transform.position);
+        }
+        ChangeBackground();
         //DoAnimationSequence();
-        //InvokeRepeating("ChangeBackground", 3f, 4f);
+
+        //DoAnimationSequence();
+        //InvokeRepeating("DoAnimationSequence", 3f, 25f);
     }
 
     // Update is called once per frame
@@ -36,28 +43,40 @@ public class ShowroomManager : MonoBehaviour
     }
     IEnumerator ChangeBackgroundCoroutine()
     {
+        while (true)
+        {
+            DoAnimationSequence();
 
-        //DoAnimationSequence();
-        //yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(27.5f);
+        }
 
-        //RotateSpriteMask();
-
-        //yield return new WaitForSeconds(.5f);
-
-        //spriteRendererTarget.sprite = backgroundList[Random.Range(0, backgroundList.Count)];
-        //spriteRendererTarget.DOFade(1, .5f).From(0);
-        //yield return new WaitForSeconds(.5f);
-        yield return new WaitForSeconds(4f);
+    }
+    void InitBox()
+    {
+        Camera.main.transform.DOMoveY(20, 0);
+        Camera.main.DOFieldOfView(61.5f, 0);
+        spriteRendererTarget.sprite = backgroundList[Random.Range(0, backgroundList.Count)];
+        spriteRendererTarget.gameObject.SetActive(false);
+        spriteRendererTarget.DOFade(0, 0);
+        for (int i = 0; i < boxPanel.Count; i++)
+        {
+            boxPanel[i].transform.DOLocalMove(boxStartPos[i], 0).SetEase(Ease.Linear);
+        }
     }
     public void DoAnimationSequence()
     {
         Sequence sequence = DOTween.Sequence();
-        spriteRendererTarget.DOFade(1, 0);
-        float totalAnimationDuration = 3;
-        //totalAnimationDuration += baseAnimationDuration;
+        InitBox();
+
+        float totalAnimationDuration = 0;
+        sequence.Insert(totalAnimationDuration, Camera.main.transform.DOMoveY(5.2f, baseAnimationDuration * 4f).From(20f));
+        totalAnimationDuration += 3f;
+        spriteRendererTarget.gameObject.SetActive(true);
+        sequence.Insert(totalAnimationDuration, spriteRendererTarget.DOFade(1, baseAnimationDuration * 3f).From(0));
+        totalAnimationDuration += baseAnimationDuration * 12f;
         sequence.Insert(totalAnimationDuration, spriteRendererTarget.DOFade(0, baseAnimationDuration * 3f).From(1));
         totalAnimationDuration += baseAnimationDuration * 3f;
-        
+
 
         totalAnimationDuration = RotateSpriteMaskDuration(totalAnimationDuration, sequence);
         sequence.InsertCallback(totalAnimationDuration, () =>
@@ -70,11 +89,11 @@ public class ShowroomManager : MonoBehaviour
         totalAnimationDuration += baseAnimationDuration * 8f;
         sequence.Insert(totalAnimationDuration, spriteRendererTarget.DOFade(0, baseAnimationDuration * 3f).From(1));
         totalAnimationDuration += baseAnimationDuration * 3f;
-        sequence.Insert(totalAnimationDuration, Camera.main.DOFieldOfView(Camera.main.fieldOfView+9, baseAnimationDuration * 4f).From(Camera.main.fieldOfView));
+        sequence.Insert(totalAnimationDuration, Camera.main.DOFieldOfView(Camera.main.fieldOfView + 9, baseAnimationDuration * 4f).From(Camera.main.fieldOfView));
         totalAnimationDuration += baseAnimationDuration * 4f;
-        
+
         totalAnimationDuration = MoveSpriteMaskDuration(totalAnimationDuration, sequence);
-        
+
         totalAnimationDuration += baseAnimationDuration * 4f;
 
         sequence.InsertCallback(totalAnimationDuration, () =>
@@ -83,8 +102,8 @@ public class ShowroomManager : MonoBehaviour
         });
         sequence.Insert(totalAnimationDuration, textparty.transform.DOScale(Vector3.one, baseAnimationDuration * 2).From(Vector3.zero).SetEase(Ease.OutBack));
         totalAnimationDuration += baseAnimationDuration * 2f;
-        sequence.Insert(totalAnimationDuration, textparty.transform.DOScale(Vector3.one * 1.5f, baseAnimationDuration * 2).From(Vector3.one).SetEase(Ease.OutBack).SetLoops(6,LoopType.Yoyo));
-        sequence.Insert(totalAnimationDuration, textparty.transform.DOMoveZ(textparty.transform.position.z-2f, baseAnimationDuration * 2).From(textparty.transform.position.z).SetEase(Ease.OutBack).SetLoops(6, LoopType.Yoyo));
+        sequence.Insert(totalAnimationDuration, textparty.transform.DOScale(Vector3.one * 1.5f, baseAnimationDuration * 2).From(Vector3.one).SetEase(Ease.OutBack).SetLoops(6, LoopType.Yoyo));
+        sequence.Insert(totalAnimationDuration, textparty.transform.DOMoveZ(textparty.transform.position.z - 2f, baseAnimationDuration * 2).From(textparty.transform.position.z).SetEase(Ease.OutBack).SetLoops(6, LoopType.Yoyo));
         totalAnimationDuration += baseAnimationDuration * 12f;
         sequence.Insert(totalAnimationDuration, textparty.transform.DOScale(Vector3.zero, baseAnimationDuration * 2).From(Vector3.one).SetEase(Ease.OutBack));
         totalAnimationDuration += baseAnimationDuration * 2f;
@@ -93,20 +112,25 @@ public class ShowroomManager : MonoBehaviour
             textparty.SetActive(false);
         });
         totalAnimationDuration += baseAnimationDuration * 4f;
-        
+
         totalAnimationDuration = MoveOutDuration(totalAnimationDuration, sequence);
 
-        totalAnimationDuration += baseAnimationDuration * 12f;
+        totalAnimationDuration += baseAnimationDuration * 4f;
+
+        sequence.Insert(totalAnimationDuration, Camera.main.DOFieldOfView(61.5f, baseAnimationDuration * 4f));
+
+        totalAnimationDuration += baseAnimationDuration * 4f;
 
         totalAnimationDuration = MoveInDuration(totalAnimationDuration, sequence);
-        
+
         totalAnimationDuration += baseAnimationDuration * 4f;
-        
-        sequence.Insert(totalAnimationDuration, spriteRendererTarget.DOFade(1, baseAnimationDuration * 3f).From(0));
+
+        sequence.Insert(totalAnimationDuration, Camera.main.transform.DOMoveY(20f, baseAnimationDuration * 4f).From(5.2f));
+
+        totalAnimationDuration += baseAnimationDuration * 8f;
+        //sequence.Insert(totalAnimationDuration, spriteRendererTarget.DOFade(1, baseAnimationDuration * 3f).From(0));
 
         Debug.Log($"{totalAnimationDuration}");
-
-
     }
     float RotateSpriteMaskDuration(float totalAnimationDuration, Sequence sequence)
     {
@@ -184,7 +208,9 @@ public class ShowroomManager : MonoBehaviour
             int col = i % columns;
 
             float multiply = (col % 2 == 0) ? -25f : 25f;
-            sequence.Insert(totalAnimationDuration, boxPanel[i].transform.DOLocalMoveY(boxPanel[i].transform.position.y, baseAnimationDuration * 6f).From(boxPanel[i].transform.position.y+multiply).SetEase(Ease.Linear));
+            sequence.Insert(totalAnimationDuration, boxPanel[i].transform.DOLocalMove(boxStartPos[i], 0).SetEase(Ease.Linear));
+
+            sequence.Insert(totalAnimationDuration, boxPanel[i].transform.DOLocalMoveY(boxPanel[i].transform.position.y, baseAnimationDuration * 6f).From(boxPanel[i].transform.position.y + multiply).SetEase(Ease.Linear));
         }
         totalAnimationDuration += baseAnimationDuration * 4f;
 
@@ -213,6 +239,7 @@ public class ShowroomManager : MonoBehaviour
                 go.transform.position = new Vector3(xPos, yPos, 0);
                 go.transform.parent = gameObject.transform;
                 xPos += 1.1f;
+                boxPanel.Add(go);
             }
             yPos += 1.1f;
             xPos = 0;
