@@ -53,6 +53,7 @@ public class ShowroomManager : MonoBehaviour
     }
     void InitBox()
     {
+
         Camera.main.transform.DOMoveY(20, 0);
         Camera.main.DOFieldOfView(61.5f, 0);
         spriteRendererTarget.sprite = backgroundList[Random.Range(0, backgroundList.Count)];
@@ -104,6 +105,7 @@ public class ShowroomManager : MonoBehaviour
         totalAnimationDuration += baseAnimationDuration * 2f;
         sequence.Insert(totalAnimationDuration, textparty.transform.DOScale(Vector3.one * 1.5f, baseAnimationDuration * 2).From(Vector3.one).SetEase(Ease.OutBack).SetLoops(6, LoopType.Yoyo));
         sequence.Insert(totalAnimationDuration, textparty.transform.DOMoveZ(textparty.transform.position.z - 2f, baseAnimationDuration * 2).From(textparty.transform.position.z).SetEase(Ease.OutBack).SetLoops(6, LoopType.Yoyo));
+        sequence.Insert(totalAnimationDuration + baseAnimationDuration * 4, textparty.transform.DOLocalRotate(Vector3.up * 360, baseAnimationDuration * 4f, RotateMode.FastBeyond360).From(Vector3.zero).SetEase(Ease.Linear));
         totalAnimationDuration += baseAnimationDuration * 12f;
         sequence.Insert(totalAnimationDuration, textparty.transform.DOScale(Vector3.zero, baseAnimationDuration * 2).From(Vector3.one).SetEase(Ease.OutBack));
         totalAnimationDuration += baseAnimationDuration * 2f;
